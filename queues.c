@@ -132,7 +132,24 @@ chain_t *ChainRemove(chain_t *root, chain_t *to_remove) {
   }
 #endif
   root->cur_cnt--;
-  return root;
+  return to_remove;
+}
+
+chain_t* ChainRemoveFP(chain_t* root, INS_PLACE remove_place){
+  ShowErr(root->type == ROOT, "incorrect type of root", NOT_EXIT, POSITION);
+  if (root->cur_cnt < 1) {
+    ShowErr(root->cur_cnt >= 1, "nothing to remove", NOT_EXIT, POSITION);
+    return NULL;
+  }
+
+  switch (remove_place) {
+    case HEAD:
+      return ChainRemove(root, root->next);
+    case TAIL:
+      return ChainRemove(root, root->prev);
+    default:
+      return NULL;
+  }
 }
 
 int ChainCheckOccurence(chain_t *root, chain_t *to_check) {
@@ -146,7 +163,6 @@ int ChainCheckOccurence(chain_t *root, chain_t *to_check) {
   return 0;
 }
 
-//TODO: add fopen output value check
 void DumpPoints(chain_t *root, FILE *dump_ptr) {
   fprintf(dump_ptr, "P%p[shape=record, label=\"prev=0x%p |pointer=0x%p\\n cur_count=%d \\n max_count=%d |next=0x%p \"];\n", root, root->prev, root,
           root->cur_cnt, root->max_cnt, root->next);
@@ -173,6 +189,11 @@ FILE *ChainDump(chain_t *root, FILE *dump_ptr) {
   if (dump_ptr == NULL) {
     dump_ptr = fopen("output.gv", "w");
   }
+  ShowErr(dump_ptr != NULL, "can`t create a file to dump", NOT_EXIT, POSITION);
+  if (dump_ptr == NULL) {
+    return NULL;
+  }
+
   fprintf(dump_ptr, "digraph G{\ncomment=\"Hello world\"\n");
   DumpPoints(root, dump_ptr);
   DumpEdges(root, dump_ptr);

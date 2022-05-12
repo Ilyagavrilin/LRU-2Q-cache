@@ -70,6 +70,8 @@ chain_t* ChainSafeInsert(chain_t* root, long ins_value, INS_PLACE place);
 //! \param to_remove pointer to removing node
 //! \return pointer to root or NULL in cause of error or queue`s mosmatch
 chain_t* ChainRemove(chain_t* root, chain_t* to_remove);
+//!\brief analog of ChainRemove to remove first(Head) or last(Tail) element of chain
+chain_t* ChainRemoveFP(chain_t* root, INS_PLACE remove_place);
 static int ShowErr(int expr,const char* msg, RESULT res, const char* file, int line, const char* func);
 int ChainCheckOccurence(chain_t* root, chain_t* to_check);
 void DumpPoints(chain_t *root, FILE *dump_ptr);

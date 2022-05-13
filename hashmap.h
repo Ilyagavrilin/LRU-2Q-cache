@@ -36,10 +36,10 @@ unsigned long hash(long key, unsigned long a, unsigned long b, unsigned long siz
 /*!
     \brief Сreates an empty hashtable
     \param [in] size  Hashtable array size
-    \return Hashtable structure
+    \return Pointer to hashtable structure
     \note Also, in the structure of the hashtable, the values a and b are generated for the hash function
 */
-hashmap_t createHashTable(unsigned long size);
+hashmap_t *createHashTable(unsigned long size);
 
 /*!
     \brief Adds a new key-value pair to the hashtable
@@ -71,4 +71,4 @@ void *deleteElement(hashmap_t *table, long key);
     \param [in] table  Pointer to hashtable
     \note The hash table size is reset to zero
 */
-void deleteHashTableData(hashmap_t *table);
+void deleteHashTable(hashmap_t *table);

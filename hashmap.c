@@ -16,11 +16,23 @@ int getRandomNumber(int min, int max) {
 
 #if TEST_CODE
 void showHashTableSettings(hashmap_t *table) {
-    printf("a = %du; b = %du; size = %lu\n", table->a, table->b, table->size);
+    if (table == NULL || table->data == NULL) {
+        printf("Table does not exist\n");
+        return;
+    }
+
+    printf("a = %d; b = %d; size = %lu\n", table->a, table->b, table->size);
+
+    return;
 }
 
-void showHashTable(hashmap_t *table) {
-    printf("-----------------\n");
+void showHashTable(hashmap_t *table, const char *message) {
+    printf("%s: \n", message);
+    if (table == NULL || table->data == NULL) {
+        printf("Table does not exist\n");
+        return;
+    }
+
     for (int i = 0; i < table->size; ++i) {
         if (table->data[i] != NULL) {
             printf("hashIndex: %d ", i);
@@ -33,48 +45,71 @@ void showHashTable(hashmap_t *table) {
             printf("--NULL;\n");
         }
     }
-    printf("-----------------\n");
+    printf("-----\n");
+
+    return;
 }
 #endif
 
-hashmap_t createHashTable(unsigned long size) {
-    hashmap_t table;
+hashmap_t *createHashTable(unsigned long size) {
+    assert(size != 0);
 
-    table.a = getRandomNumber(1, INT_MAX - 1);
-    table.b = getRandomNumber(0, INT_MAX - 1);
-    table.size = size;
-    table.data = (bucket_t**) calloc(size, sizeof(bucket_t*));
+    hashmap_t *table = (hashmap_t*) calloc(1, sizeof(hashmap_t));
 
-    if (table.data == NULL) {
-        table.size = 0;
-        table.data = NULL;
-        return table;
+    if (table == NULL) {
+        return NULL;
+    }
+
+    table->a = getRandomNumber(1, INT_MAX - 1);
+    table->b = getRandomNumber(0, INT_MAX - 1);
+    table->size = size;
+    table->data = (bucket_t**) calloc(size, sizeof(bucket_t*));
+
+    if (table->data == NULL) {
+        free(table);
+        return NULL;
     }
 
     for (int i = 0; i < size; ++i) {
-        table.data[i] = NULL;
+        table->data[i] = NULL;
     }
     
+    #if TEST_CODE
+    showHashTableSettings(table);
+    #endif
+
     return table;
 }
 
-void deleteHashTableData(hashmap_t *table) {
-    for (int i = 0; i < table->size; ++i) {
-        bucket_t *link = table->data[i];
-        bucket_t *nextLink = link;
-        while (link != NULL) {
-            nextLink = link->next;
-            free(link);
-            link = nextLink;
-        }
-    }
-    free(table->data);
+void deleteHashTable(hashmap_t *table) {
+    if (table == NULL) {
+        #if TEST_CODE
+        printf("deleteHashTable function completed\n");
+        #endif
 
-    table->size = 0;
+        return;
+    }
+
+    if (table->data != NULL) {
+        for (int i = 0; i < table->size; ++i) {
+            bucket_t *link = table->data[i];
+            bucket_t *nextLink = link;
+            while (link != NULL) {
+                nextLink = link->next;
+                free(link);
+                link = nextLink;
+            }
+        }
+        free(table->data);
+    }
+
+    free(table);
 
     #if TEST_CODE
-    showHashTable(table);
+    printf("deleteHashTable function completed\n");
     #endif
+
+    return;
 }
 
 int getIntLog2(unsigned long size) {
@@ -94,8 +129,14 @@ int getIntLog2(unsigned long size) {
 
 unsigned long hash(long key, unsigned long a, unsigned long b, unsigned long size) {
     assert(a != 0);
+    assert(size != 0);
 
-    return ((a * (unsigned long int)key + b) >> (32 - getIntLog2(size))) % size;
+    int m = getIntLog2(size);
+    int w = (m > 32) ? 64 : 32;
+
+    assert(m <= 64);
+
+    return ((a * (unsigned long)key + b) >> (w - m)) % size;
 }
 
 void *getElement(hashmap_t *table, long key) {
@@ -108,7 +149,7 @@ void *getElement(hashmap_t *table, long key) {
     while(link != NULL) {
         if (link->key == key) {
             #if TEST_CODE
-            showHashTable(table);
+            showHashTable(table, "getElement function completed");
             #endif
 
             return link->value;
@@ -117,7 +158,7 @@ void *getElement(hashmap_t *table, long key) {
     }
 
     #if TEST_CODE
-    showHashTable(table);
+    showHashTable(table, "getElement function completed");
     #endif
 
     return NULL;
@@ -129,7 +170,7 @@ int addElement(hashmap_t *table, long key, void *value) {
 
     if(getElement(table, key) != NULL) {
         #if TEST_CODE
-        showHashTable(table);
+        showHashTable(table, "addElement function completed");
         #endif
 
         return 0;
@@ -140,7 +181,7 @@ int addElement(hashmap_t *table, long key, void *value) {
 
     if (newBucket == NULL) {
         #if TEST_CODE
-        showHashTable(table);
+        showHashTable(table, "addElement function completed");
         #endif
 
         return -1;
@@ -152,7 +193,7 @@ int addElement(hashmap_t *table, long key, void *value) {
     table->data[hashValue] = newBucket;
 
     #if TEST_CODE
-    showHashTable(table);
+    showHashTable(table, "addElement function completed");
     #endif
 
     return 1;
@@ -167,35 +208,31 @@ void *deleteElement(hashmap_t *table, long key) {
 
     if ((*link) == NULL) {
         #if TEST_CODE
-        printf("return #1\n");
-        showHashTable(table);
+        printf("deleteElement func return #1\n");
+        showHashTable(table, "deleteElement function completed");
         #endif
 
         return NULL;
     }
 
     do {
-        #if TEST_CODE
-        showHashTable(table);
-        #endif
         if ((*link)->key == key) {
             void *value = (*link)->value;
             *link = (*link)->next;
 
             #if TEST_CODE
-            printf("return #2\n");
-            showHashTable(table);
+            printf("deleteElement func return #2\n");
+            showHashTable(table, "deleteElement function completed");
             #endif
 
             return value;
         }
-        printf("%ld\n", (*link)->key);
         link = &((*link)->next);
     } while (*link != NULL);
 
     #if TEST_CODE
-    printf("return #3\n");
-    showHashTable(table);
+    printf("deleteElement func return #3\n");
+    showHashTable(table, "deleteElement function completed");
     #endif
 
     return NULL;

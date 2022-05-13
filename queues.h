@@ -1,12 +1,18 @@
 #pragma once
+
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
-
+#include <time.h>
+//this define help to allocate place where error was raised
 #define POSITION __FILE__, __LINE__, __PRETTY_FUNCTION__
+//define SECURITY_LVL for enabling in_function warning
+//if you want graphic dump set SECURITY_LVL>1
 #define SECURITY_LVL 1
-#define SECURE_PTR
-
+//SECURE_PTR includes check of elements of chain to avoid situation, when one element inserted in chain two times
+//#define SECURE_PTR
+// define if you want to compile program for linux
+//#define LNX
 typedef enum {
   EXIT,
   NOT_EXIT,
@@ -72,7 +78,9 @@ chain_t* ChainSafeInsert(chain_t* root, long ins_value, INS_PLACE place);
 chain_t* ChainRemove(chain_t* root, chain_t* to_remove);
 //!\brief analog of ChainRemove to remove first(Head) or last(Tail) element of chain
 chain_t* ChainRemoveFP(chain_t* root, INS_PLACE remove_place);
+//------------------------------------------------------------------------
 static int ShowErr(int expr,const char* msg, RESULT res, const char* file, int line, const char* func);
 int ChainCheckOccurence(chain_t* root, chain_t* to_check);
 void DumpPoints(chain_t *root, FILE *dump_ptr);
 FILE* ChainDump(chain_t* root, FILE* dump_ptr);
+void ChainISDump(chain_t* root);

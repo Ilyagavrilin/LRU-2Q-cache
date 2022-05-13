@@ -34,7 +34,9 @@ void ChainDtr(chain_t *root) {
   int cnt = 0;
   ShowErr(root != NULL, "invalid root pointer", EXIT, POSITION);
   ShowErr(root->type == ROOT, "invalid cell type", EXIT, POSITION);
-
+#if SECURITY_LVL > 1
+  ChainISDump(root);
+#endif
   chain_t *to_delete = root->next;
   chain_t *tmp;
   while (to_delete != NULL && to_delete->type != ROOT) {
@@ -58,6 +60,9 @@ chain_t *ChainInsert(chain_t *root, chain_t *to_insert, INS_PLACE place) {
                POSITION)) {
     return NULL;
   }
+#endif
+#if SECURITY_LVL > 1
+  ChainISDump(root);
 #endif
   if (root->cur_cnt + 1 > root->max_cnt) {
     return NULL;
@@ -113,6 +118,9 @@ chain_t *ChainRemove(chain_t *root, chain_t *to_remove) {
     return NULL;
   }
 #endif
+#if SECURITY_LVL > 1
+  ChainISDump(root);
+#endif
   if (root->cur_cnt == 0) {
     return NULL; // we have nothing to remove
   }
@@ -120,17 +128,6 @@ chain_t *ChainRemove(chain_t *root, chain_t *to_remove) {
   chain_t *next = to_remove->next;
   prev->next = next;
   next->prev = prev;
-#if 0
-  if (root->cur_cnt == 1 && root->next == root->prev) {
-    root->next = NULL; root->prev = NULL;
-    free(to_remove);
-  } else {
-    chain_t* prev = to_remove->prev;
-    chain_t* next = to_remove->next;
-    prev->next = next;
-    next->prev = prev;
-  }
-#endif
   root->cur_cnt--;
   return to_remove;
 }
@@ -199,4 +196,29 @@ FILE *ChainDump(chain_t *root, FILE *dump_ptr) {
   DumpEdges(root, dump_ptr);
   fprintf(dump_ptr, "}");
   return dump_ptr;
+}
+
+void ChainISDump(chain_t* root) {
+  if (root == NULL) {
+    return;
+  }
+
+  char* fname;
+  clock_t t = time(NULL);
+  struct tm* aTm = localtime(&t);
+  char filename[30];
+  sprintf(filename, "dump_%02dh_%02dm_%02ds.gv", aTm->tm_hour, aTm->tm_min, aTm->tm_sec);
+  FILE* file = fopen(filename, "w");
+  if (file == NULL) {
+    ShowErr(file != NULL, "no dump avaliable", NOT_EXIT, POSITION);
+    return;
+  }
+
+  ChainDump(root, file);
+  fclose(file);
+#ifdef LNX
+  char command[50];
+  sprintf(command, "dot -Tsvg -O %s", filename);
+  system(command);
+#endif
 }

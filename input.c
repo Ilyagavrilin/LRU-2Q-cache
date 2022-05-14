@@ -72,14 +72,14 @@ MODE InputInit() {
   }
 }
 
-static long ScanNumber(const char* msg, FILE* stream) {
+static unsigned long ScanNumber(const char* msg, FILE* stream) {
   long res;
   int scanf_ret = 0;
   ShowErr(stream != NULL, "invalid stream pointer", EXIT, POSITION);
   if (stream == stdin) {
     printf("%s", msg);
   }
-  scanf_ret = scanf("%ld", &res);
+  scanf_ret = scanf("%lu", &res);
   while (scanf_ret != 1 || res < 0) {
     if (stream == stdin) {
       printf("Incorrect value, please try again:");

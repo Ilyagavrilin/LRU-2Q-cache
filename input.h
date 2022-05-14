@@ -18,8 +18,8 @@ typedef enum {
 } MODE;
 //structure of input data
 typedef struct {
-  long cache_size;
-  long requests_sz;
+  int cache_size;
+  unsigned long requests_sz;
   caching_t* requests;
 } input_t;
 

@@ -9,6 +9,7 @@ static int ShowErr(int expr, const char *msg, RESULT res, const char *file, int 
   }
   return 0;
 #else
+  assert(expr);
   return 1;
 #endif
 }

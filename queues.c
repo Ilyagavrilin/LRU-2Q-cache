@@ -1,5 +1,22 @@
 #include "queues.h"
 
+//this define help to allocate place where error was raised
+#define POSITION __FILE__, __LINE__, __PRETTY_FUNCTION__
+//define SECURITY_LVL for enabling in_function warning
+//if you want graphic dump set SECURITY_LVL>1
+#define SECURITY_LVL 0
+//SECURE_PTR includes check of elements of chain to avoid situation, when one element inserted in chain two times
+//#define SECURE_PTR
+// define if you want to compile program for linux
+//#define LNX
+typedef enum {
+    EXIT,
+    NOT_EXIT,
+} RESULT;
+
+static int ShowErr(int expr,const char* msg, RESULT res, const char* file, int line, const char* func);
+//-------------------------------------
+
 static int ShowErr(int expr, const char *msg, RESULT res, const char *file, int line, const char *func) {
 #if SECURITY_LVL > 0
   if (expr > 0) { return 1; }
@@ -54,7 +71,7 @@ void ChainDtr(chain_t *root) {
 
 chain_t *ChainInsert(chain_t *root, chain_t *to_insert, INS_PLACE place) {
   ShowErr(root != NULL && root->type == ROOT, "invalid type or pointer to \'root\' cell", EXIT, POSITION);
-  ShowErr(to_insert != NULL & to_insert->type != ROOT, "invalid type or pointer of inserting cell", EXIT, POSITION);
+  ShowErr(to_insert != NULL && to_insert->type != ROOT, "invalid type or pointer of inserting cell", EXIT, POSITION);
   ShowErr(root->name == to_insert->name, "elements belong different chains", EXIT, POSITION);
 #ifdef SECURE_PTR
   if (!ShowErr(ChainCheckOccurence(root, to_insert) == 0, "this node already in queue", EXIT,
@@ -204,7 +221,6 @@ void ChainISDump(chain_t* root) {
     return;
   }
 
-  char* fname;
   clock_t t = time(NULL);
   struct tm* aTm = localtime(&t);
   char filename[30];

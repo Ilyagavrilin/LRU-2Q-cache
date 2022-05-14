@@ -5,7 +5,7 @@ OBJECTS=$(SOURCE:.c=.o)
 EXECUTABLE=LRU_2Q
 #compilation options
 COMPILER=gcc
-CFLAGS=-Wall -std=C11
+CFLAGS= -Wall -Wfloat-equal -Wundef -std=c11
 
 
 

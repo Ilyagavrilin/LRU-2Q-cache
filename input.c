@@ -1,8 +1,21 @@
 #include "input.h"
 
+//this define help to allocate place where error was raised
+#define POSITION __FILE__, __LINE__, __PRETTY_FUNCTION__
+//define SECURITY_LVL for enabling in_function warning
+//if you want graphic dump set SECURITY_LVL>1
+#define SECURITY_LVL 0
+
+
+typedef enum {
+  EXIT,
+  NOT_EXIT,
+} RESULT;
+
 static int ShowErr(int expr, const char *msg, RESULT res, const char *file, int line, const char *func);
 static void CleanBuffer();
 static long ScanNumber(const char* msg, FILE* stream);
+//---------------------
 
 int RunTest() {
   return 1;
@@ -179,18 +192,17 @@ input_t *InputFile() {
 
 FILE* InputScanFname() {
   FILE* res;
-  char* gets_res = NULL;
-  char filename[51];
+  int scanf_res = 0;
+  char filename[51] = {0};
   printf("Enter file name: ");
-  while (gets_res == NULL) {
-    gets_res = fgets(filename, 50, stdin);
-    CleanBuffer();
+  while (scanf_res == 0) {
+    scanf_res = scanf("%50s", filename);
 
-    if (gets_res != NULL) {
+    if (scanf_res != 0) {
       res = fopen(filename, "r");
       if (res == NULL) {
         printf("You entered non existing file.\n");
-        gets_res = NULL;
+        scanf_res = 0;
       }
     }
 

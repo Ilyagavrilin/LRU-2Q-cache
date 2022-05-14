@@ -71,27 +71,27 @@ Cache2Q_t *createCache2Q(unsigned long size) {
     cache->fifoOutRoot = ChainCtr(FIFO_OUT, (size / 5) * 3);
 
     if (cache->fifoOutRoot == NULL) {
-        free(cache);
         ChainDtr(cache->fifoInRoot);
+        free(cache);
         return NULL;
     }
 
     cache->lru2Root = ChainCtr(LRU, size / 5);
 
     if (cache->lru2Root == NULL) {
-        free(cache);
         ChainDtr(cache->fifoInRoot);
         ChainDtr(cache->fifoOutRoot);
+        free(cache);
         return NULL;
     }
 
     cache->table = createHashTable(size);
 
     if (cache->table == NULL) {
-        free(cache);
         ChainDtr(cache->fifoInRoot);
         ChainDtr(cache->fifoOutRoot);
         ChainDtr(cache->lru2Root);
+        free(cache);
         return NULL;
     }
 

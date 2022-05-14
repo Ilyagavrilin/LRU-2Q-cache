@@ -43,7 +43,7 @@ hashmap_t *createHashTable(unsigned long size);
 
 /*!
     \brief Adds a new key-value pair to the hashtable
-    \param [in] table  Pointer to hashtable
+    \param [out] table  Pointer to hashtable
     \param [in] key  Long int key
     \param [in] value  Pointer of type *void to a value
     \return 1 - if value added; 0 - if the value already exists; -1 - if an error occurred while adding the value
@@ -60,7 +60,7 @@ void *getElement(hashmap_t *table, long key);
 
 /*!
     \brief Removes an existing pointer to a value with the given key from the hash table
-    \param [in] table  Pointer to hashtable
+    \param [out] table  Pointer to hashtable
     \param [in] key  Long int key
     \return A pointer to the value if it could be removed from the hash table, or NULL if the desired value does not exist
 */
@@ -68,7 +68,7 @@ void *deleteElement(hashmap_t *table, long key);
 
 /*!
     \brief Completely removes all data in the hashtable
-    \param [in] table  Pointer to hashtable
+    \param [out] table  Pointer to hashtable
     \note The hash table size is reset to zero
 */
 void deleteHashTable(hashmap_t *table);

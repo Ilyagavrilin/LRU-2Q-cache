@@ -20,7 +20,7 @@ typedef struct Cache2Q_t {
     \param [in] size  Сache and hashtable size
     \return Pointer to 2q cache structure with built-in hashtable
 */
-Cache2Q_t *createCache2Q(unsigned long size);
+Cache2Q_t *createCache2Q(int size);
 
 /*!
     \brief Delete all contents of 2q cache and hashtable
@@ -43,4 +43,4 @@ int appendTo2Q(long value, Cache2Q_t *cache);
     \param [in] sizeCache  Сache and hashtable size
     \return Number of 2q cache hits
 */
-unsigned long appendArrayTo2Q(long *arr, unsigned long length, unsigned long sizeCache);
+unsigned long appendArrayTo2Q(long *arr, unsigned long length, int sizeCache);

@@ -52,23 +52,37 @@ void showCache2Q(Cache2Q_t *cache) {
 }
 #endif
 
-Cache2Q_t *createCache2Q(unsigned long size) {
-    assert(size != 0);
+Cache2Q_t *createCache2Q(int size) {
+    assert(size > 2);
 
     Cache2Q_t *cache = (Cache2Q_t*) calloc(1, sizeof(Cache2Q_t));
+    int fifoInSize = size / 5, fifoOutSize = (size / 5) * 3, lru2Size = size / 5, extra = size % 5;
+
+    switch (extra) {
+        case 4:
+            fifoOutSize += 1;
+        case 3:
+            fifoInSize += 1;
+        case 2:
+            lru2Size += 1;
+        case 1:
+            fifoOutSize += 1;
+        default:
+            break;
+    }
 
     if (cache == NULL) {
         return NULL;
     }
 
-    cache->fifoInRoot = ChainCtr(FIFO_IN, size / 5);
+    cache->fifoInRoot = ChainCtr(FIFO_IN, fifoInSize);
 
     if (cache->fifoInRoot == NULL) {
         free(cache);
         return NULL;
     }
 
-    cache->fifoOutRoot = ChainCtr(FIFO_OUT, (size / 5) * 3);
+    cache->fifoOutRoot = ChainCtr(FIFO_OUT, fifoOutSize);
 
     if (cache->fifoOutRoot == NULL) {
         ChainDtr(cache->fifoInRoot);
@@ -76,7 +90,7 @@ Cache2Q_t *createCache2Q(unsigned long size) {
         return NULL;
     }
 
-    cache->lru2Root = ChainCtr(LRU, size / 5);
+    cache->lru2Root = ChainCtr(LRU, lru2Size);
 
     if (cache->lru2Root == NULL) {
         ChainDtr(cache->fifoInRoot);
@@ -199,9 +213,9 @@ int appendTo2Q(long value, Cache2Q_t *cache) {
     return 1;
 }
 
-unsigned long appendArrayTo2Q(long *arr, unsigned long length, unsigned long sizeCache) {
+unsigned long appendArrayTo2Q(long *arr, unsigned long length, int sizeCache) {
     assert(arr != NULL);
-    assert(length != 0 && sizeCache != 0);
+    assert(length != 0 && sizeCache > 2);
 
     Cache2Q_t *cache = createCache2Q(sizeCache);
     unsigned long res = 0;

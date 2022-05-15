@@ -3,7 +3,7 @@
 #include "test.h"
 #include "cache2q.h"
 
-unsigned CreateN(unsigned min, unsigned max){               // генератор N
+unsigned CreateN(unsigned min, unsigned max){
     int n = 0;
     n = min + rand() % (max - min + 1);
     return n;
@@ -23,11 +23,13 @@ void  FillArr(long a[], unsigned long size, unsigned min, unsigned max) {       
 
 
 int PunPreload() {
+    //////////////////////////Test Block//////////////////////////////////
     //          length;  sizeCache;   ans;       arr
     long arr0[] = {5,        4,        0,    1, 2, 3, 4, 5};
     long arr1[] = {5,        4,        4,    0, 0, 0, 0, 0};
     long arr2[] = {3,        3,        2,    0, 0, 0};
     long arr3[] = {3,        4,        0,    1, 2, 3};
+    ///////////////////////////////////////////////////////////////
 
     long *SUPER_ARR[] = {arr0, arr1, arr2, arr3};
 

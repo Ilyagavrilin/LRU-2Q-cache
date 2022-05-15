@@ -3,27 +3,41 @@
 #include <time.h>
 #include <assert.h>
 
+enum {
+    MIN_length = 5,
+    MAX_length = 100,
 
+    MIN_sizeCache = 4,
+    MAX_sizeCache = 50,
+
+    MIN_element_arr = 5,
+    MAX_element_arr = 100,
+};
 //--- header
 
-///Generating a random number in the range from 0 to a
-int createN(int a);
+///Accepts 2 numbers and outputs a random number between them (used to generate the size of an array)
+unsigned CreateN(unsigned min, unsigned max);
 /*!
-    a
+    unsigned min - minimum number
+    unsigned max - maximum number
 */
 
-
-///the function for starting the program (hereinafter, instead of it, the function for starting the algorithm)
-int bebra(unsigned long cache_sz, unsigned long arr_sz, unsigned long *arr);
+///Accepts 2 numbers and outputs a random number between them (used to generate the cache size)
+long CreatesizeCache(long min, long max);
 /*!
-    cache_sz - cache size
-    arr_sz - array size
-    arr - array of requests
+   * unsigned min - minimum number
+   * unsigned max - maximum number
 */
 
-///random number list generation function
-void CreateArr(unsigned long a[], unsigned long size, unsigned long n_requests);
+///Fills the array with random numbers
+void  FillArr(long a[], unsigned long size, unsigned min, unsigned max);
+/*!
+   * unsigned min - minimum number in array
+   * unsigned max - maximum number in array
+*/
 
+int PunPreload();
 
-//изменить на int 1 - success, 0 -
-int RunTests(int n_tests);
+int RunGenerated(int a);
+
+int RunTests(int a);

@@ -218,7 +218,10 @@ void *deleteElement(hashmap_t *table, long key) {
     do {
         if ((*link)->key == key) {
             void *value = (*link)->value;
+            bucket_t *deletedBucket = *link;
             *link = (*link)->next;
+
+            free(deletedBucket);
 
             #if TEST_CODE
             printf("deleteElement func return #2\n");

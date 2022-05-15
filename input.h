@@ -23,12 +23,23 @@ typedef struct {
   caching_t* requests;
 } input_t;
 
-input_t* InputScan();//main function
+//runs main process of returning data
+input_t* InputScan();
+//change programm mode
 MODE InputInit();
+//scan input values from console with wriitten hints
 input_t *InputConsole();
+//scan data from file
 input_t *InputFile();
+//like InputConsole, but without hints
 input_t *InputSimple();
-caching_t InputScanCache(FILE* stream);//function which writes for each caching type
-int RunTest();
+//function to scan that type of data which will be in cache
+caching_t InputScanCache(FILE* stream);
+//read from console name of file with request
 FILE* InputScanFname();
+//delets structure with input data
 void InputFree(input_t* data);
+//scans withiut multiple requests
+caching_t InputFScanCache(FILE* stream);
+//checks data before starting cache algorithm
+int InputChkOccur(input_t* data);

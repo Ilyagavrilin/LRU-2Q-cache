@@ -175,12 +175,12 @@ input_t *InputFile() {
   if (file == NULL){
     file = InputScanFname();//no file pointer checking because it enabled in InputScanFname()
   }
-  if (fscanf(file, "%ld %ld", &(res->cache_size), &(res->requests_sz)) != 2) {
+  if (fscanf(file, "%d %lu", &(res->cache_size), &(res->requests_sz)) != 2) {
     printf("Nothing to read in file.\n");
     return NULL;
   }
   ShowErr(res->cache_size >= 0, "invalid cache size", EXIT, POSITION);
-  ShowErr(res->requests_sz >= 0, "invalid count of requests", EXIT, POSITION);
+  ShowErr(res->requests_sz >= 0, "invalid count of requests", EXIT, POSITION); 
   res->requests = (caching_t*) calloc(res->requests_sz, sizeof(caching_t));
   ShowErr(res->requests != NULL, "invalid count of requests", EXIT, POSITION);
   for (int i = 0; i < res->requests_sz; i++) {
@@ -213,6 +213,25 @@ FILE* InputScanFname() {
 void InputFree(input_t* data) {
   ShowErr(data!= NULL, "invalid pointer for free.", EXIT, POSITION);
   free(data->requests);
-  data->cache_size = 0xBADDED; data->requests_sz = 0xBAD;
   free(data);
+}
+
+int InputChkOccur(input_t* data) {
+  ShowErr(data!=NULL, "Invalid pointer to data", EXIT, POSITION);
+
+  if (data->cache_size < 3) {
+    if (data->cache_size <= 0) {
+      printf("Invalid cache size\n");
+    } else {
+      printf("Cache size too small, can`t separate for 3 queue.");
+    }
+    return 0;
+  }
+
+  if (data->requests < 0) {
+    printf("Invalid count of requests.\n");
+    return 0;
+  }
+
+  return 1;
 }

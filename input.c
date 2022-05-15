@@ -1,5 +1,5 @@
 #include "input.h"
-
+#include "test.h"
 //this define help to allocate place where error was raised
 #define POSITION __FILE__, __LINE__, __PRETTY_FUNCTION__
 //define SECURITY_LVL for enabling in_function warning
@@ -17,9 +17,7 @@ static void CleanBuffer();
 static unsigned long ScanNumber(const char* msg, FILE* stream);
 //---------------------
 
-int RunTest() {
-  return 1;
-}
+
 
 static int ShowErr(int expr, const char *msg, RESULT res, const char *file, int line, const char *func) {
 #if SECURITY_LVL > 0
@@ -96,7 +94,7 @@ input_t* InputScan() {
     case END_PROC:
       return NULL;
     case TEST:
-      tst_res = RunTest();
+      tst_res = RunTests(10);
       if (tst_res == 1) {
         printf("test successfully passed.\n");
       } else {

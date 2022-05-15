@@ -14,7 +14,7 @@ typedef enum {
 
 static int ShowErr(int expr, const char *msg, RESULT res, const char *file, int line, const char *func);
 static void CleanBuffer();
-static long ScanNumber(const char* msg, FILE* stream);
+static unsigned long ScanNumber(const char* msg, FILE* stream);
 //---------------------
 
 int RunTest() {

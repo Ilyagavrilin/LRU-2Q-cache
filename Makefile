@@ -5,9 +5,13 @@ OBJECTS=$(SOURCE:.c=.o)
 EXECUTABLE=LRU_2Q
 #compilation options
 COMPILER=gcc
+NTEST=10
 CFLAGS= -Wall -Wfloat-equal -Wundef -std=c11 -D HW8_INPUT
+TSTFLAGS = -Wall -Wfloat-equal -Wundef -std=c11 -D HW8_INPUT -D 'TST_RUN=$(NTEST)'
 
 
+test:
+	$(COMPILER) $(SOURCE) $(TSTFLAGS)  -o $(EXECUTABLE)
 
 all: $(SOURCE) $(EXECUTABLE) clean
 

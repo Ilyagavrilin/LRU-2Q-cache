@@ -1,10 +1,15 @@
 #include "cache2q.h"
 #include "input.h"
-
+#include "test.h"
 
 
 int main(){
   srand(time(0));
+#ifdef TST_RUN
+  if (RunTests(TST_RUN) == 0) {
+    return 0;
+  }
+#else
   input_t* data;
 #ifdef HW8_INPUT
   data = InputScan();
@@ -19,6 +24,7 @@ int main(){
     }
     InputFree(data);
   }
+#endif
 #endif  
   return 0;
 }

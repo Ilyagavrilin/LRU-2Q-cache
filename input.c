@@ -89,6 +89,9 @@ static unsigned long ScanNumber(const char* msg, FILE* stream) {
 }
 
 input_t* InputScan() {
+#ifdef HW8_INPUT
+  return InputSimple();
+#else
   int tst_res;
   switch (InputInit()) {
     case END_PROC:
@@ -110,7 +113,7 @@ input_t* InputScan() {
     default:
       return NULL;
   }
-
+#endif
 }
 
 caching_t InputScanCache(FILE* stream) {
@@ -118,12 +121,16 @@ caching_t InputScanCache(FILE* stream) {
   int scanf_ret = 0;
   ShowErr(stream != NULL, "invalid stream pointer", EXIT, POSITION);
   scanf_ret = fscanf(stream, "%ld", &res);
+#ifdef HW8_INPUT
+  return (scanf_ret == 1)? res:0;
+#else  
   while (scanf_ret != 1) {
     printf("Incorrect value, please try again:");
     CleanBuffer();
     scanf_ret = fscanf(stream, "%ld", &res);
   }
   return res;
+#endif  
 }
 
 caching_t InputFScanCache(FILE* stream) {
@@ -138,8 +145,10 @@ caching_t InputFScanCache(FILE* stream) {
 input_t *InputSimple() {
   input_t* res = (input_t*) malloc(sizeof(input_t));
   ShowErr(res != NULL, "memory allocation error", EXIT, POSITION);
-  res->cache_size = ScanNumber("", stdin);
-  res->requests_sz = ScanNumber("", stdin);
+  if (scanf("%d %lu", &(res->cache_size), &(res->requests_sz)) != 2) {
+    free(res);
+    return NULL;
+  }
   ShowErr(res->requests_sz >= 0, "invalid number of requests", EXIT, POSITION);
   res->requests = (caching_t*) calloc(res->requests_sz, sizeof(caching_t));
   ShowErr(res->requests != NULL, "memory allocation error", EXIT, POSITION);
@@ -219,15 +228,15 @@ int InputChkOccur(input_t* data) {
 
   if (data->cache_size < 3) {
     if (data->cache_size <= 0) {
-      printf("Invalid cache size\n");
+      fprintf(stderr, "Invalid cache size\n");
     } else {
-      printf("Cache size too small, can`t separate for 3 queue.");
+      fprintf(stderr, "Cache size too small, can`t separate for 3 queue.\n");
     }
     return 0;
   }
 
   if (data->requests < 0) {
-    printf("Invalid count of requests.\n");
+    fprintf(stderr, "Invalid count of requests.\n");
     return 0;
   }
 
